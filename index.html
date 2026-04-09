@@ -866,6 +866,11 @@
 </footer>
 
 <script>
+  // Setze hier deine Live-Backend-URL nach dem Deployment, z. B.:
+  // window.LAOLA_API_ENDPOINT = 'https://dein-backend.de/api/bewerbung';
+  window.LAOLA_API_ENDPOINT = window.LAOLA_API_ENDPOINT || '';
+</script>
+<script>
   // Bubbles
   const bubbleContainer = document.getElementById('bubbles');
   for (let i = 0; i < 18; i++) {
@@ -945,7 +950,13 @@
     submitBtn.textContent = '⏳ Wird gesendet...';
 
     try {
-      const apiEndpoint = window.LAOLA_API_ENDPOINT || 'http://localhost:3000/api/bewerbung';
+      const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+      const apiEndpoint = window.LAOLA_API_ENDPOINT || (isLocalHost ? 'http://localhost:3000/api/bewerbung' : '');
+
+      if (!apiEndpoint) {
+        throw new Error('BACKEND_NOT_CONFIGURED');
+      }
+
       const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -969,7 +980,11 @@
       document.getElementById('theForm').style.display = 'none';
       document.getElementById('successMsg').style.display = 'block';
     } catch (err) {
-      alert('Die Bewerbung konnte gerade nicht versendet werden. Bitte versuche es erneut.');
+      if (err.message === 'BACKEND_NOT_CONFIGURED') {
+        alert('Backend-URL fehlt. Setze window.LAOLA_API_ENDPOINT auf deine Live-API, z. B. https://dein-backend.de/api/bewerbung');
+      } else {
+        alert('Die Bewerbung konnte gerade nicht versendet werden. Bitte prüfe, ob das Backend läuft und erneut versuchen.');
+      }
       submitBtn.disabled = false;
       submitBtn.textContent = '🚀 Bewerbung abschicken';
     }
