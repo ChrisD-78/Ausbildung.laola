@@ -1,26 +1,28 @@
 # LA OLA Karriere Website
 
-## Backend Mailversand (unsichtbar)
+## Mailversand mit Netlify Functions
 
-### 1) Abhaengigkeiten installieren
-```bash
-npm install
-```
+Das Formular sendet an `/.netlify/functions/bewerbung`.
+Die E-Mail wird unsichtbar serverseitig ueber Netlify + SMTP verschickt.
 
-### 2) Umgebungsvariablen setzen
-```bash
-cp .env.example .env
-```
+### Netlify Environment Variables
 
-Dann `.env` mit echten SMTP-Daten fuellen.
+In Netlify unter `Site configuration -> Environment variables` setzen:
 
-### 3) Backend starten
-```bash
-npm start
-```
+- `SMTP_HOST`
+- `SMTP_PORT` (z. B. `587`)
+- `SMTP_SECURE` (`false` bei Port 587, `true` bei 465)
+- `SMTP_USER`
+- `SMTP_PASS`
+- `SMTP_FROM`
+- `BEWERBUNG_TO` (z. B. `christof.drost@landau.de`)
 
-Das Backend laeuft dann standardmaessig auf `http://localhost:3000`.
+### Deploy
 
-### 4) Frontend testen
-`index.html` im Browser oeffnen (z. B. via lokalem Static Server).
-Beim Klick auf "Bewerbung abschicken" wird die Mail serverseitig versendet.
+Netlify nutzt `netlify.toml`:
+
+- publish: `.`
+- functions: `netlify/functions`
+
+Danach neu deployen, dann funktioniert der Versand direkt ueber
+`https://ausbildung-laola.netlify.app/.netlify/functions/bewerbung`.

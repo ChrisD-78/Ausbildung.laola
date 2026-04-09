@@ -866,9 +866,9 @@
 </footer>
 
 <script>
-  // Setze hier deine Live-Backend-URL nach dem Deployment, z. B.:
-  // window.LAOLA_API_ENDPOINT = 'https://dein-backend.de/api/bewerbung';
-  window.LAOLA_API_ENDPOINT = window.LAOLA_API_ENDPOINT || '';
+  // Standard: Netlify Function im selben Projekt.
+  // Optional ueberschreiben, falls externe API genutzt wird.
+  window.LAOLA_API_ENDPOINT = window.LAOLA_API_ENDPOINT || '/.netlify/functions/bewerbung';
 </script>
 <script>
   // Bubbles
@@ -950,8 +950,7 @@
     submitBtn.textContent = '⏳ Wird gesendet...';
 
     try {
-      const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-      const apiEndpoint = window.LAOLA_API_ENDPOINT || (isLocalHost ? 'http://localhost:3000/api/bewerbung' : '');
+      const apiEndpoint = window.LAOLA_API_ENDPOINT || '/.netlify/functions/bewerbung';
 
       if (!apiEndpoint) {
         throw new Error('BACKEND_NOT_CONFIGURED');
@@ -981,9 +980,9 @@
       document.getElementById('successMsg').style.display = 'block';
     } catch (err) {
       if (err.message === 'BACKEND_NOT_CONFIGURED') {
-        alert('Backend-URL fehlt. Setze window.LAOLA_API_ENDPOINT auf deine Live-API, z. B. https://dein-backend.de/api/bewerbung');
+        alert('Backend-URL fehlt. Setze window.LAOLA_API_ENDPOINT auf deine API-URL.');
       } else {
-        alert('Die Bewerbung konnte gerade nicht versendet werden. Bitte prüfe, ob das Backend läuft und erneut versuchen.');
+        alert('Die Bewerbung konnte gerade nicht versendet werden. Bitte prüfe die Netlify-Function und SMTP-Einstellungen.');
       }
       submitBtn.disabled = false;
       submitBtn.textContent = '🚀 Bewerbung abschicken';
