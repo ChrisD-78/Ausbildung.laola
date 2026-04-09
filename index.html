@@ -915,13 +915,49 @@
 
   // Form submit
   function submitForm() {
-    const vorname = document.getElementById('vorname').value;
-    const email = document.getElementById('email').value;
+    const vorname = document.getElementById('vorname').value.trim();
+    const nachname = document.getElementById('nachname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const telefon = document.getElementById('telefon').value.trim();
+    const alter = document.getElementById('alter').value.trim();
     const art = document.getElementById('art').value;
+    const motivation = document.getElementById('motivation').value.trim();
+
+    const skills = [];
+    if (document.getElementById('schwimmen').checked) skills.push('Gut schwimmen');
+    if (document.getElementById('erstehilfe').checked) skills.push('Erste-Hilfe-Kurs absolviert');
+    if (document.getElementById('rettung').checked) skills.push('Rettungsschwimmer-Abzeichen');
+    if (document.getElementById('technik').checked) skills.push('Technisches Interesse');
+
     if (!vorname || !email || !art) {
       alert('Bitte fülle mindestens Vorname, E-Mail und Art der Bewerbung aus.');
       return;
     }
+
+    const artLabel = {
+      praktikum: 'Schülerpraktikum',
+      ausbildung: 'Ausbildung Fachangestellter für Bäderbetriebe',
+      beides: 'Beides - erstmal schauen'
+    }[art] || art;
+
+    const subject = `Neue Bewerbung LA OLA - ${vorname}${nachname ? ' ' + nachname : ''}`;
+    const body = [
+      'Neue Bewerbung über das LA OLA Karriere-Formular',
+      '',
+      `Vorname: ${vorname}`,
+      `Nachname: ${nachname || '-'}`,
+      `E-Mail: ${email}`,
+      `Telefon: ${telefon || '-'}`,
+      `Alter: ${alter || '-'}`,
+      `Interesse: ${artLabel}`,
+      `Motivation: ${motivation || '-'}`,
+      `Ich kann bereits: ${skills.length ? skills.join(', ') : '-'}`,
+      '',
+      `Gesendet am: ${new Date().toLocaleString('de-DE')}`
+    ].join('\n');
+
+    window.location.href = `mailto:christof.drost@landau.de?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
     document.getElementById('theForm').style.display = 'none';
     document.getElementById('successMsg').style.display = 'block';
   }
